@@ -1,5 +1,5 @@
 import pandas as pd
-from src.OptimizePortfolio import Portfolio
+from src.op import Portfolio
 
 assets = ['a', 'b', 'c', 'd', 'e']
 position = [-10, -5, 3, 2, 1]

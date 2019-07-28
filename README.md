@@ -1,4 +1,4 @@
-##Portfolio optimization subject to leverage, position concentration, transaction cost and sector exposure constraints
+## Portfolio optimization subject to leverage, position concentration, transaction cost and sector exposure constraints
 
 For example, the optimal_non_reducing_dollar_neutral_weights() method minimizes net dollar exposure subject to position concentration bounds and leverage constraints. It does so only by adding new positions and not reducing existing position. The rationale for this is reducing transaction costs.
 

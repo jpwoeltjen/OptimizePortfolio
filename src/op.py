@@ -284,7 +284,8 @@ class Portfolio:
     def dollar_neutral_top_selection(self, signal,
                                      long_quantile=0.1, short_quantile=0.1,
                                      min_th=0, buy_low=True,
-                                     long_th_incr=None, short_th_incr=None):
+                                     long_th_incr=None, short_th_incr=None,
+                                     forward_looking=True):
         """ Select best new long and short positions such that the portfolio
         is as neutral has possible without reducing positions and being equally
         weighted. The signal is assumed to be a mean reversion signal,
@@ -310,8 +311,15 @@ class Portfolio:
         if not buy_low:
             signal = -signal
 
-        current_longs = self.longs().index
-        current_shorts = self.shorts().index
+        if forward_looking:
+            current_longs = self.longs().drop(signal[signal >= 0].index,
+                                              axis=0, errors='ignore').index
+            current_shorts = self.shorts().drop(signal[signal <= 0].index,
+                                                axis=0, errors='ignore').index
+
+        else:
+            current_longs = self.longs().index
+            current_shorts = self.shorts().index
 
         signal_ascending = signal.sort_values(ascending=True)
         signal_descending = signal.sort_values(ascending=False)
