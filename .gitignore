@@ -4,3 +4,7 @@ venv/
 __pycache__/
 .cache/
 .DS_Store
+.csv
+ScreenShot_example.jpg
+.txt
+.txt.md5

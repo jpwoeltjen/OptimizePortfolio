@@ -34,4 +34,6 @@ pf.trade(asset=new_pos['new_shorts'][1],
 print(pf)
 print('longs', pf.longs())
 print('shorts', pf.shorts())
-print(pf.sector_net_exposures())
+print('sector net exposure:\n', pf.sector_net_exposures())
+print('len', len(pf))
+print('first=largest:\n', pf[0])
