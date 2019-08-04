@@ -12,16 +12,16 @@ class Portfolio:
         """
         Parameters
         ----------
-        assets : array
+        assets : np.array, pd.Series, list
             Assets in Portfolio
-        position : array
+        position : np.array, pd.Series, list
             Current Long (non-negative) and
             Short (non-positive) Positions of 'assets' in Shares
-        price : array
+        price : np.array, pd.Series, list
             Current Price of 'assets' in Dollars
-        factor_value : array
+        factor_value : np.array, pd.Series, list
             Factor values of 'assets'
-        sector_id : array
+        sector_id : np.array, pd.Series, list
             Sector identification of 'assets'
         """
 
@@ -142,9 +142,9 @@ class Portfolio:
                                               new_position.price)
             self.portfolio_df = self.portfolio_df.append(new_position,
                                                          verify_integrity=True)
-            self.portfolio_df.sort_values(by=['position_value'],
-                                          axis=0, inplace=True,
-                                          ascending=False)
+        self.portfolio_df.sort_values(by=['position_value'],
+                                      axis=0, inplace=True,
+                                      ascending=False)
 
     def optimal_non_reducing_dollar_neutral_weights(self,
                                                     n_new_longs,
@@ -299,12 +299,37 @@ class Portfolio:
                                      long_quantile=0.1, short_quantile=0.1,
                                      min_th=0, buy_low=True,
                                      long_th_incr=None, short_th_incr=None,
-                                     forward_looking=True):
+                                     liquidating_th=0):
         """ Select best new long and short positions such that the portfolio
         is as neutral has possible without reducing positions and being equally
         weighted. The signal is assumed to be a mean reversion signal,
-        i.e., high positive values are sold and negative values are bought.
-
+        i.e., high positive values are sold and negative values are bought (if
+        not set buy_low=False).
+        Parameters
+        ----------
+        long_quantile: float
+            Signal quantile of long threshold
+        short_quantile: float
+            Signal quantile of short threshold
+        min_th: float
+            No new position below this value even if within quantile.
+        buy_low: bool
+            True if low (large negative) signal values will lead to buy
+            decision and high (large positive) signal values will lead to sell
+            decision. False otherwise.
+        long_th_incr: float:
+            Above which treshold is adding to longs (given that their actual
+            position is not yet equal to the goal position) permitted.
+            None if equal to new long threshold.
+        short_th_incr: float:
+            Above which treshold is adding to shorts (given that their actual
+            position is not yet equal to the goal position) permitted.
+            None if equal to new short threshold.
+        liquidating_th: float
+            At which signal value are positions liquidated.
+            This parameter is used compute current position
+            in a forward-looking fashion. Set to None to ignore
+            liquidation.
         Returns
         -------
         new_longs: list
@@ -325,10 +350,10 @@ class Portfolio:
         if not buy_low:
             signal = -signal
 
-        if forward_looking:
-            current_longs = self.longs().drop(signal[signal >= 0].index,
+        if liquidating_th is not None:
+            current_longs = self.longs().drop(signal[signal >= -liquidating_th].index,
                                               axis=0, errors='ignore').index
-            current_shorts = self.shorts().drop(signal[signal <= 0].index,
+            current_shorts = self.shorts().drop(signal[signal <= liquidating_th].index,
                                                 axis=0, errors='ignore').index
 
         else:
