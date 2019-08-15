@@ -1,5 +1,7 @@
 import pandas as pd
-from src.op import Portfolio
+from src.portfolio import Portfolio
+from src.construction import dollar_neutral_top_selection
+
 
 assets = ['a', 'b', 'c', 'd', 'e']
 position = [-10, -5, 3, 2, 1]
@@ -24,9 +26,9 @@ print('longs', pf.longs())
 print('shorts', pf.shorts())
 
 signal = pd.Series(data={'a': -2, 'f': -6, 'g': 9, 'h': -10, 'i': 10})
-new_pos = pf.dollar_neutral_top_selection(signal, long_quantile=1,
-                                          short_quantile=1, min_th=0,
-                                          buy_low=True)
+new_pos = dollar_neutral_top_selection(pf, signal, long_quantile=1,
+                                       short_quantile=1, min_th=0,
+                                       buy_low=True)
 print(new_pos)
 
 pf.trade(asset=new_pos['new_shorts'][1],

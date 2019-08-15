@@ -1,7 +1,8 @@
 import unittest
 import pandas as pd
 import numpy as np
-from src.op import Portfolio
+from src.portfolio import Portfolio
+from src.construction import dollar_neutral_top_selection
 
 
 class TestPortfolio(unittest.TestCase):
@@ -91,11 +92,11 @@ class TestPortfolio(unittest.TestCase):
 
         signal = pd.Series(data={'a': -2, 'b': 0, 'c': 1, 'd': 2, 'e': 3,
                                  'f': -6, 'g': 9, 'h': -10, 'i': 10})
-        new_pos = self.pf.dollar_neutral_top_selection(signal,
-                                                       long_quantile=1e-8,
-                                                       short_quantile=1e-8,
-                                                       min_th=1e-8,
-                                                       buy_low=True)
+        new_pos = dollar_neutral_top_selection(self.pf, signal,
+                                               long_quantile=1e-8,
+                                               short_quantile=1e-8,
+                                               min_th=1e-8,
+                                               buy_low=True)
         self.assertEqual(new_pos['new_longs'], ['h'])
         self.assertEqual(new_pos['new_shorts'], ['i'])
         self.assertEqual(new_pos['long_th'], signal['h'])
@@ -113,11 +114,11 @@ class TestPortfolio(unittest.TestCase):
         self.assertEqual(pf1.longs().index.tolist(), ['h'])
         self.assertEqual(pf1.shorts().index.tolist(), ['i'])
 
-        new_pos = self.pf.dollar_neutral_top_selection(signal,
-                                                       long_quantile=1,
-                                                       short_quantile=1,
-                                                       min_th=1e-8,
-                                                       buy_low=True)
+        new_pos = dollar_neutral_top_selection(self.pf, signal,
+                                               long_quantile=1,
+                                               short_quantile=1,
+                                               min_th=1e-8,
+                                               buy_low=True)
         self.assertEqual(new_pos['new_longs'], ['h', 'f', 'a'])
         self.assertEqual(new_pos['new_shorts'], ['i', 'g', 'e'])
         self.assertEqual(new_pos['long_th'], -1e-8)
@@ -135,11 +136,11 @@ class TestPortfolio(unittest.TestCase):
         self.assertEqual(pf1.longs().index.tolist(), ['h', 'f', 'a'])
         self.assertEqual(pf1.shorts().index.tolist(), ['i', 'g', 'e'])
 
-        new_pos = self.pf.dollar_neutral_top_selection(signal,
-                                                       long_quantile=1e-8,
-                                                       short_quantile=1e-8,
-                                                       min_th=1e-8,
-                                                       buy_low=False)
+        new_pos = dollar_neutral_top_selection(self.pf, signal,
+                                               long_quantile=1e-8,
+                                               short_quantile=1e-8,
+                                               min_th=1e-8,
+                                               buy_low=False)
         self.assertEqual(new_pos['new_longs'], [])
         self.assertEqual(new_pos['new_shorts'], ['h'])
         self.assertEqual(new_pos['long_th'], 10)
@@ -157,11 +158,11 @@ class TestPortfolio(unittest.TestCase):
         self.assertEqual(pf1.longs().index.tolist(), ['c', 'd', 'e'])
         self.assertEqual(pf1.shorts().index.tolist(), ['a', 'h'])
 
-        new_pos = self.pf.dollar_neutral_top_selection(signal,
-                                                       long_quantile=1,
-                                                       short_quantile=1,
-                                                       min_th=1e-8,
-                                                       buy_low=False)
+        new_pos = dollar_neutral_top_selection(self.pf, signal,
+                                               long_quantile=1,
+                                               short_quantile=1,
+                                               min_th=1e-8,
+                                               buy_low=False)
         self.assertEqual(new_pos['new_longs'], [])
         self.assertEqual(new_pos['new_shorts'], ['h', 'f'])
         self.assertEqual(new_pos['long_th'], 1e-8)
@@ -177,11 +178,11 @@ class TestPortfolio(unittest.TestCase):
         self.assertEqual(pf1.longs().index.tolist(), ['c', 'd', 'e'])
         self.assertEqual(pf1.shorts().index.tolist(), ['a', 'h', 'f'])
 
-        new_pos = self.pf.dollar_neutral_top_selection(signal,
-                                                       long_quantile=0.5,
-                                                       short_quantile=0.5,
-                                                       min_th=1e-8,
-                                                       buy_low=True)
+        new_pos = dollar_neutral_top_selection(self.pf, signal,
+                                               long_quantile=0.5,
+                                               short_quantile=0.5,
+                                               min_th=1e-8,
+                                               buy_low=True)
         self.assertEqual(new_pos['new_longs'], ['h', 'f', 'a'])
         self.assertEqual(new_pos['new_shorts'], ['i', 'g', 'e'])
         self.assertEqual(new_pos['long_th'], -1e-8)
@@ -197,11 +198,11 @@ class TestPortfolio(unittest.TestCase):
         self.assertEqual(pf1.longs().index.tolist(), ['h', 'f', 'a'])
         self.assertEqual(pf1.shorts().index.tolist(), ['i', 'g', 'e'])
 
-        new_pos = self.pf.dollar_neutral_top_selection(signal,
-                                                       long_quantile=0.5,
-                                                       short_quantile=0.5,
-                                                       min_th=1e-8,
-                                                       buy_low=False)
+        new_pos = dollar_neutral_top_selection(self.pf, signal,
+                                               long_quantile=0.5,
+                                               short_quantile=0.5,
+                                               min_th=1e-8,
+                                               buy_low=False)
         self.assertEqual(new_pos['new_longs'], [])
         self.assertEqual(new_pos['new_shorts'], ['h', 'f'])
         self.assertEqual(new_pos['long_th'], 1)
@@ -219,11 +220,11 @@ class TestPortfolio(unittest.TestCase):
 
         signal = pd.Series(data={'b': 0, 'c': 1, 'd': 2, 'e': 3, 'a': -20,
                                  'f': -6, 'g': -9, 'h': -10, 'i': -10})
-        new_pos = self.pf.dollar_neutral_top_selection(signal,
-                                                       long_quantile=1e-8,
-                                                       short_quantile=1e-8,
-                                                       min_th=1e-8,
-                                                       buy_low=False)
+        new_pos = dollar_neutral_top_selection(self.pf, signal,
+                                               long_quantile=1e-8,
+                                               short_quantile=1e-8,
+                                               min_th=1e-8,
+                                               buy_low=False)
         self.assertEqual(new_pos['new_longs'], [])
         self.assertEqual(new_pos['new_shorts'], [])
         self.assertEqual(new_pos['long_th'], 3)
@@ -244,11 +245,11 @@ class TestPortfolio(unittest.TestCase):
         signal = pd.Series(data={'b': 0, 'c': 1, 'd': 2, 'e': 3,
                                  'a': -2, 'f': -6, 'g': -9,
                                  'h': -10, 'i': -10})
-        new_pos = self.pf.dollar_neutral_top_selection(signal,
-                                                       long_quantile=1,
-                                                       short_quantile=1,
-                                                       min_th=1e-8,
-                                                       buy_low=False)
+        new_pos = dollar_neutral_top_selection(self.pf, signal,
+                                               long_quantile=1,
+                                               short_quantile=1,
+                                               min_th=1e-8,
+                                               buy_low=False)
         self.assertEqual(new_pos['new_longs'], [])
         self.assertEqual(new_pos['new_shorts'], ['i', 'h'])
         self.assertEqual(new_pos['long_th'], 1e-8)
@@ -264,11 +265,11 @@ class TestPortfolio(unittest.TestCase):
         self.assertEqual(pf1.longs().index.tolist(), ['c', 'd', 'e'])
         self.assertEqual(pf1.shorts().index.tolist(), ['a', 'i', 'h'])
 
-        new_pos = self.pf.dollar_neutral_top_selection(signal,
-                                                       long_quantile=1,
-                                                       short_quantile=1,
-                                                       min_th=11,
-                                                       buy_low=False)
+        new_pos = dollar_neutral_top_selection(self.pf, signal,
+                                               long_quantile=1,
+                                               short_quantile=1,
+                                               min_th=11,
+                                               buy_low=False)
         self.assertEqual(new_pos['new_longs'], [])
         self.assertEqual(new_pos['new_shorts'], [])
         self.assertEqual(new_pos['long_th'], 11)
@@ -284,11 +285,11 @@ class TestPortfolio(unittest.TestCase):
         self.assertEqual(pf1.longs().index.tolist(), ['c', 'd', 'e'])
         self.assertEqual(pf1.shorts().index.tolist(), ['a'])
 
-        new_pos = self.pf.dollar_neutral_top_selection(signal,
-                                                       long_quantile=1,
-                                                       short_quantile=1,
-                                                       min_th=11,
-                                                       buy_low=True)
+        new_pos = dollar_neutral_top_selection(self.pf, signal,
+                                               long_quantile=1,
+                                               short_quantile=1,
+                                               min_th=11,
+                                               buy_low=True)
         self.assertEqual(new_pos['new_longs'], [])
         self.assertEqual(new_pos['new_shorts'], [])
         self.assertEqual(new_pos['long_th'], -11)
@@ -306,11 +307,11 @@ class TestPortfolio(unittest.TestCase):
 
         signal = pd.Series(data={'a': -2, 'f': 2, 'g': np.nan, 'h': -9,
                                  'i': -10, 'j': 3})
-        new_pos = self.pf.dollar_neutral_top_selection(signal,
-                                                       long_quantile=1,
-                                                       short_quantile=1,
-                                                       min_th=1e-8,
-                                                       buy_low=True)
+        new_pos = dollar_neutral_top_selection(self.pf, signal,
+                                               long_quantile=1,
+                                               short_quantile=1,
+                                               min_th=1e-8,
+                                               buy_low=True)
         self.assertEqual(new_pos['new_longs'], [])
         self.assertEqual(new_pos['new_shorts'], ['j', 'f'])
         self.assertEqual(new_pos['long_th'], -1e-8)
@@ -319,11 +320,11 @@ class TestPortfolio(unittest.TestCase):
         signal = pd.Series(data={'a': np.nan, 'f': np.nan,
                                  'g': np.nan, 'h': np.nan,
                                  'i': 10, 'j': np.nan})
-        new_pos = self.pf.dollar_neutral_top_selection(signal,
-                                                       long_quantile=1,
-                                                       short_quantile=1,
-                                                       min_th=1e-8,
-                                                       buy_low=True)
+        new_pos = dollar_neutral_top_selection(self.pf, signal,
+                                               long_quantile=1,
+                                               short_quantile=1,
+                                               min_th=1e-8,
+                                               buy_low=True)
         self.assertEqual(new_pos['new_longs'], [])
         self.assertEqual(new_pos['new_shorts'], ['i'])
         self.assertEqual(new_pos['long_th'], -1e-8)
