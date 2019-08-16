@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import scipy.optimize as sco
+import warnings
 
 
 def minimize_objective(tickers, objective_function,
@@ -26,7 +27,7 @@ def minimize_objective(tickers, objective_function,
     )
 
     if not result["success"]:
-        raise ValueError('optimizer did not converge.')
+        warnings.warn("Optimizer did not converge.")
 
     weights = result["x"]
     return dict(zip(tickers, weights))
