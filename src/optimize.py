@@ -5,7 +5,7 @@ import warnings
 
 
 def minimize_objective(tickers, objective_function,
-                       market_neutral=True, bounds=(-1, 1), *args):
+                       market_neutral=True, bounds=(-1.0, 1.0), *args):
 
     n_assets = len(tickers)
 
@@ -15,11 +15,11 @@ def minimize_objective(tickers, objective_function,
         constraints = [
             {"type": "eq", "fun": lambda x: np.sum(x)}]
     else:
-        constraints = [{"type": "eq", "fun": lambda x: np.sum(x) - 1}]
+        constraints = [{"type": "eq", "fun": lambda x: np.sum(x) - 1.0}]
 
     result = sco.minimize(
         objective_function,
-        x0=np.array([1/n_assets] * n_assets),
+        x0=np.array([1.0/n_assets] * n_assets),
         args=args,
         method="SLSQP",
         bounds=[bounds]*n_assets,
