@@ -59,6 +59,23 @@ def negative_sharpe(weights, expected_returns, cov_matrix,
     return -(mu - risk_free_rate) / sigma + L2_reg
 
 
+def pc_cov(cov, n_components):
+    """ Decopose the covariance matrix into eigenvalues and
+    eigenvectors. Discard eigenvalues smaller than the n_compenent's
+    eigenvalue and return the denoised covariance matrix.
+    """
+    evalues, Q = np.linalg.eig(cov)
+    evalues[evalues < evalues[n_components]] = 0
+
+    # Since cov is symmetric, by spectral theorem Q_inv = Q_T
+    Q_T = np.matrix.transpose(Q)
+    L = np.diag(evalues)
+    # Due to spectral theorem all eigenvalues must be real. I encountered
+    # complex eigenvalues regardless. Hence, extract real part.
+    denoised_cov = pd.DataFrame(Q.dot(L).dot(Q_T)).apply(np.real)
+    return denoised_cov
+
+
 if __name__ == '__main__':
     from scipy.stats import random_correlation
 
