@@ -293,7 +293,16 @@
     \hypertarget{portfolio-optimization}{%
 \section{Portfolio Optimization}\label{portfolio-optimization}}
 
-    Let's simulate a bunch of stocks belonging to different industries. Each
+    In the following I will investigate several portfolio optimization
+methods by means of Monte Carlo simulation. In particular, I will
+compare Markowitz mean-variance optimization based on sample moments
+with industry-neutral equal weighting as a baseline. Further, I will
+explore a hierarchical method and principal component analysis as a
+means to reduce estimation error of the covariance matrix. These methods
+can improve upon Markowitz optimization and equal weighting both under
+Gaussian and fat-tailed noise distributions.
+
+Let's simulate a bunch of stocks belonging to different industries. Each
 stock is composed of a deterministic trend \(\mu\), a loading on the
 market related stochastic trend \(\beta_{market}\) and a loading on the
 industry specific stochastic trend \(\beta_{industry}\). For each stock,
@@ -433,29 +442,8 @@ correlation between assets is due to the factors.
             \PY{k}{return} \PY{n}{equity\PYZus{}curve}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{o}{/}\PY{n}{equity\PYZus{}curve}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{p}{)}\PY{o}{*}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
         
         
-        \PY{n}{p\PYZus{}year} \PY{o}{=} \PY{l+m+mi}{250}
-        \PY{n}{num\PYZus{}samples} \PY{o}{=} \PY{n}{p\PYZus{}year}\PY{o}{*}\PY{l+m+mi}{4}
-        
-        \PY{n}{sigma} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
-        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{market}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.1}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
-        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{banks}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.1}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
-        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{oil}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.14}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
-        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{insurance}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.07}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
-        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tech}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.2}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
-        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.12}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
-        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{pharma}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.22}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
-        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{auto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.05}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
-        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{retail}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.125}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
-        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{manufacturing}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.1}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
-        
-        \PY{n}{sigma\PYZus{}noise} \PY{o}{=} \PY{l+m+mf}{0.1}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
-        \PY{n}{MC\PYZus{}RUNS} \PY{o}{=} \PY{l+m+mi}{5}
-        \PY{n}{PLOT\PYZus{}STOCKS} \PY{o}{=} \PY{k+kc}{False}
-\end{Verbatim}
-
-   \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}2}]:} \PY{k}{def} \PY{n+nf}{plot\PYZus{}equity\PYZus{}curve}\PY{p}{(}\PY{n}{log\PYZus{}returns}\PY{p}{)}\PY{p}{:}
-            \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{log\PYZus{}returns}\PY{o}{.}\PY{n}{cumsum}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+        \PY{k}{def} \PY{n+nf}{plot\PYZus{}equity\PYZus{}curve}\PY{p}{(}\PY{n}{log\PYZus{}returns}\PY{p}{)}\PY{p}{:}
+            \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{log\PYZus{}returns}\PY{o}{.}\PY{n}{cumsum}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.5}\PY{p}{)}
             \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Equity Curve}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
             \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Period}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
             \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Equity Value}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
@@ -495,7 +483,6 @@ correlation between assets is due to the factors.
             \PY{c+c1}{\PYZsh{} Make same gross leverage}
             \PY{n}{equal\PYZus{}weights} \PY{o}{=} \PY{n}{equal\PYZus{}weights}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{abs}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{weights}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
         
-        \PY{c+c1}{\PYZsh{}     print(\PYZsq{}|| In\PYZhy{}Sample Performance || \PYZbs{}n\PYZsq{})}
             \PY{n}{portfolio\PYZus{}sm\PYZus{}is} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{stocks}\PY{o}{.}\PY{n}{values}\PY{p}{,}
                                      \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{weights}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{[}\PY{p}{:}\PY{n}{n\PYZus{}train}\PY{p}{]}
             \PY{n}{IR\PYZus{}ann} \PY{o}{=} \PY{n}{information\PYZus{}ratio}\PY{p}{(}\PY{n}{portfolio\PYZus{}sm\PYZus{}is}\PY{p}{)}
@@ -507,7 +494,6 @@ correlation between assets is due to the factors.
             \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{IR equal\PYZus{}is: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{IR\PYZus{}ann}\PY{p}{)}
             \PY{n}{plot\PYZus{}equity\PYZus{}curve}\PY{p}{(}\PY{n}{portfolio\PYZus{}equal\PYZus{}is}\PY{p}{)}
         
-        \PY{c+c1}{\PYZsh{}     print(\PYZsq{}|| Out\PYZhy{}of\PYZhy{}Sample Performance || \PYZbs{}n\PYZsq{})}
             \PY{n}{portfolio\PYZus{}sm\PYZus{}oos} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{stocks}\PY{o}{.}\PY{n}{values}\PY{p}{,}
                                       \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{weights}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{[}\PY{n}{n\PYZus{}train}\PY{p}{:}\PY{p}{]}
             \PY{n}{IR\PYZus{}ann} \PY{o}{=} \PY{n}{information\PYZus{}ratio}\PY{p}{(}\PY{n}{portfolio\PYZus{}sm\PYZus{}oos}\PY{p}{)}
@@ -520,6 +506,28 @@ correlation between assets is due to the factors.
             \PY{n}{plot\PYZus{}equity\PYZus{}curve}\PY{p}{(}\PY{n}{portfolio\PYZus{}equal\PYZus{}oos}\PY{p}{)}
         
             \PY{k}{return} \PY{n}{weights}
+        
+        
+        
+        \PY{n}{p\PYZus{}year} \PY{o}{=} \PY{l+m+mi}{250}
+        \PY{n}{num\PYZus{}samples} \PY{o}{=} \PY{n}{p\PYZus{}year}\PY{o}{*}\PY{l+m+mi}{4}
+        
+        \PY{n}{sigma} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{market}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.1}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
+        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{banks}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.1}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
+        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{oil}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.14}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
+        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{insurance}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.07}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
+        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tech}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.2}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
+        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.12}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
+        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{pharma}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.22}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
+        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{auto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.05}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
+        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{retail}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.125}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
+        \PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{manufacturing}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.1}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
+        
+        \PY{n}{sigma\PYZus{}noise} \PY{o}{=} \PY{l+m+mf}{0.1}\PY{o}{/}\PY{n}{p\PYZus{}year}\PY{o}{*}\PY{o}{*}\PY{l+m+mf}{0.5}
+        
+        \PY{n}{MC\PYZus{}RUNS} \PY{o}{=} \PY{l+m+mi}{10}
+        \PY{n}{PLOT\PYZus{}STOCKS} \PY{o}{=} \PY{k+kc}{False}
 \end{Verbatim}
 
     The results below show that out-of-sample (oos) performance of the
@@ -527,53 +535,53 @@ optimized portfolio using sample moments (sm) is decent if the number of
 assets is relatively small. It definitely beats equal weighting (equal).
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}3}]:} \PY{n}{industry} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+{\color{incolor}In [{\color{incolor}2}]:} \PY{n}{industry} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
         \PY{n}{industry}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{manufacturing}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{norm}\PY{o}{.}\PY{n}{rvs}\PY{p}{(}\PY{n}{size}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{num\PYZus{}samples}\PY{p}{)}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{*}\PY{n}{sigma}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{manufacturing}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
         \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{show\PYZus{}standard\PYZus{}optimized\PYZus{}equity}\PY{p}{(}\PY{n}{n\PYZus{}stocks}\PY{o}{=}\PY{l+m+mi}{100}\PY{p}{,} \PY{n}{industry}\PY{o}{=}\PY{n}{industry}\PY{p}{)}
 \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_5_0.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_4_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR sm\_is:  12.651404211591572
+IR sm\_is:  14.274032129538938
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_5_2.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_4_2.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR equal\_is:  9.236222264204967
+IR equal\_is:  5.721563189877289
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_5_4.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_4_4.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR sm\_oos:  9.910268820307552
+IR sm\_oos:  7.637887456929092
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_5_6.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_4_6.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR equal\_oos:  9.236222264204967
+IR equal\_oos:  5.721563189877289
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_5_8.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_4_8.png}
     \end{center}
     { \hspace*{\fill} \\}
     
@@ -583,51 +591,51 @@ cannot short, hedging out that risk is also not possible. Hence, our
 bets are not independent and the Law of Large Numbers does not apply.
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}4}]:} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{show\PYZus{}standard\PYZus{}optimized\PYZus{}equity}\PY{p}{(}\PY{n}{n\PYZus{}stocks}\PY{o}{=}\PY{l+m+mi}{100}\PY{p}{,} \PY{n}{industry}\PY{o}{=}\PY{n}{industry}\PY{p}{,} \PY{n}{long\PYZus{}only}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}3}]:} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{show\PYZus{}standard\PYZus{}optimized\PYZus{}equity}\PY{p}{(}\PY{n}{n\PYZus{}stocks}\PY{o}{=}\PY{l+m+mi}{100}\PY{p}{,} \PY{n}{industry}\PY{o}{=}\PY{n}{industry}\PY{p}{,} \PY{n}{long\PYZus{}only}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
 \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_7_0.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_6_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR sm\_is:  1.1077591138055525
+IR sm\_is:  0.5853880251555333
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_7_2.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_6_2.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR equal\_is:  0.3523053803647488
+IR equal\_is:  -0.6123757070640578
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_7_4.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_6_4.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR sm\_oos:  2.1694236324044276
+IR sm\_oos:  0.5164220402938328
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_7_6.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_6_6.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR equal\_oos:  0.3523053803647488
+IR equal\_oos:  -0.6123757070640578
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_7_8.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_6_8.png}
     \end{center}
     { \hspace*{\fill} \\}
     
@@ -639,56 +647,56 @@ Even the very naive approach of equal weighting beats mean-variance
 optimization out-of-sample embarrassingly often.
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}5}]:} \PY{n}{weights} \PY{o}{=} \PY{n}{show\PYZus{}standard\PYZus{}optimized\PYZus{}equity}\PY{p}{(}\PY{n}{n\PYZus{}stocks}\PY{o}{=}\PY{l+m+mi}{300}\PY{p}{,} \PY{n}{industry}\PY{o}{=}\PY{n}{industry}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}4}]:} \PY{n}{weights} \PY{o}{=} \PY{n}{show\PYZus{}standard\PYZus{}optimized\PYZus{}equity}\PY{p}{(}\PY{n}{n\PYZus{}stocks}\PY{o}{=}\PY{l+m+mi}{300}\PY{p}{,} \PY{n}{industry}\PY{o}{=}\PY{n}{industry}\PY{p}{)}
 \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_9_0.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_8_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR sm\_is:  34.85381862182288
+IR sm\_is:  26.949248378797808
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_9_2.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_8_2.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR equal\_is:  12.958840166422652
+IR equal\_is:  10.425697654396167
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_9_4.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_8_4.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR sm\_oos:  12.452707833288388
+IR sm\_oos:  11.796260598862835
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_9_6.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_8_6.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR equal\_oos:  12.958840166422652
+IR equal\_oos:  10.425697654396167
 
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_9_8.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_8_8.png}
     \end{center}
     { \hspace*{\fill} \\}
     
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}6}]:} \PY{c+c1}{\PYZsh{} creating portfolio object}
+{\color{incolor}In [{\color{incolor}5}]:} \PY{c+c1}{\PYZsh{} creating portfolio object}
         \PY{n}{pf} \PY{o}{=} \PY{n}{Portfolio}\PY{p}{(}\PY{n}{assets}\PY{o}{=}\PY{n}{weights}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{,}
                        \PY{n}{position}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{n}{weights}\PY{p}{)}\PY{p}{,}
                        \PY{n}{price}\PY{o}{=}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{*}\PY{n+nb}{len}\PY{p}{(}\PY{n}{weights}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}
@@ -698,35 +706,35 @@ IR equal\_oos:  12.958840166422652
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-Portfolio: 300 Assets, \$38.91 Long, \$38.91 Short
-largest long: manufacturing\_stock\_212 0.7374611476838714
-largest short: manufacturing\_stock\_93 -1.0
+Portfolio: 300 Assets, \$35.69 Long, \$35.69 Short
+largest long: manufacturing\_stock\_35 0.7470542974614564
+largest short: manufacturing\_stock\_171 -0.686910165001864
 
     \end{Verbatim}
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}7}]:} \PY{c+c1}{\PYZsh{} Showing the first 5 positions in portfolio}
+{\color{incolor}In [{\color{incolor}6}]:} \PY{c+c1}{\PYZsh{} Showing the first 5 positions in portfolio}
         \PY{n}{pf}\PY{o}{.}\PY{n}{portfolio\PYZus{}df}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
 \end{Verbatim}
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}7}]:}                          position  price  factor\_value  sector\_id  \textbackslash{}
-        manufacturing\_stock\_212  0.737461      1           1.0        0.0   
-        manufacturing\_stock\_299  0.721744      1           1.0        0.0   
-        manufacturing\_stock\_278  0.658798      1           1.0        0.0   
-        manufacturing\_stock\_91   0.657564      1           1.0        0.0   
-        manufacturing\_stock\_33   0.651608      1           1.0        0.0   
+{\color{outcolor}Out[{\color{outcolor}6}]:}                          position  price  factor\_value  sector\_id  \textbackslash{}
+        manufacturing\_stock\_35   0.747054      1           1.0        0.0   
+        manufacturing\_stock\_227  0.618434      1           1.0        0.0   
+        manufacturing\_stock\_12   0.587384      1           1.0        0.0   
+        manufacturing\_stock\_256  0.579406      1           1.0        0.0   
+        manufacturing\_stock\_125  0.555688      1           1.0        0.0   
         
                                  position\_value  
-        manufacturing\_stock\_212        0.737461  
-        manufacturing\_stock\_299        0.721744  
-        manufacturing\_stock\_278        0.658798  
-        manufacturing\_stock\_91         0.657564  
-        manufacturing\_stock\_33         0.651608  
+        manufacturing\_stock\_35         0.747054  
+        manufacturing\_stock\_227        0.618434  
+        manufacturing\_stock\_12         0.587384  
+        manufacturing\_stock\_256        0.579406  
+        manufacturing\_stock\_125        0.555688  
 \end{Verbatim}
             
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}8}]:} \PY{c+c1}{\PYZsh{} Plotting the weight distribution}
+{\color{incolor}In [{\color{incolor}7}]:} \PY{c+c1}{\PYZsh{} Plotting the weight distribution}
         \PY{n}{pf}\PY{o}{.}\PY{n}{portfolio\PYZus{}df}\PY{o}{.}\PY{n}{position\PYZus{}value}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{style}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
         \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Position Allocation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
         \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Ordered Positions}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
@@ -735,7 +743,7 @@ largest short: manufacturing\_stock\_93 -1.0
 \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_12_0.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_11_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
@@ -759,7 +767,7 @@ optimize allocation to these clusters. This is pursued next and compared
 to the standard optimization.
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}9}]:} \PY{n}{trainig\PYZus{}pct} \PY{o}{=} \PY{l+m+mf}{0.5}
+{\color{incolor}In [{\color{incolor}8}]:} \PY{n}{trainig\PYZus{}pct} \PY{o}{=} \PY{l+m+mf}{0.5}
         \PY{n}{n\PYZus{}train} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{n}{trainig\PYZus{}pct}\PY{o}{*}\PY{n}{num\PYZus{}samples}\PY{p}{)}
         \PY{n}{ir\PYZus{}sm\PYZus{}is} \PY{o}{=} \PY{p}{[}\PY{p}{]}
         \PY{n}{ir\PYZus{}sm\PYZus{}oos} \PY{o}{=} \PY{p}{[}\PY{p}{]}
@@ -926,8 +934,8 @@ to the standard optimization.
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
 MC run:  0
-IR gt\_is:  22.764742896098532
-IR gt\_oos:  25.423096737395447
+IR gt\_is:  22.97727534341568
+IR gt\_oos:  25.601650253512382
 
     \end{Verbatim}
 
@@ -939,138 +947,203 @@ converge.
     \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR sm\_is:  81.48841850109251
-IR sm\_oos:  8.080572298936241
-\{'banks': 0.1129615293128751, 'oil': 0.14377718823878444, 'insurance':
-0.014058226197895225, 'tech': 0.25574763628860203, 'bio': 0.11006700677931346,
-'pharma': 0.2816138500871653, 'auto': 0.033685980441805465, 'retail':
-0.031187363281997244, 'manufacturing': 0.016901219371561752\}
-IR hier\_is:  21.75333684206342
-IR hier\_oos:  21.47607243677229
-IR equal\_is:  8.934242690940316
-IR equal\_oos:  10.597192555243918
+IR sm\_is:  68.86642974717553
+IR sm\_oos:  6.699566592572767
+\{'banks': 0.08525765766039736, 'oil': 0.026799533838017413, 'insurance':
+0.020444231421016416, 'tech': 0.117966834969583, 'bio': 0.30235562609587247, 'pharma':
+0.06960329827570759, 'auto': 0.14206749885277828, 'retail': 0.19377667069590016,
+'manufacturing': 0.041728648190727496\}
+IR hier\_is:  20.8116940244627
+IR hier\_oos:  21.865542855743392
+IR equal\_is:  7.95182566091046
+IR equal\_oos:  7.326006935456171
 MC run:  1
-IR gt\_is:  24.24065757939983
-IR gt\_oos:  24.084090939842696
-IR sm\_is:  61.00200926194065
-IR sm\_oos:  6.886453408141832
-\{'banks': 0.12417886489545167, 'oil': 0.13952485969362854, 'insurance':
-0.06895271343658817, 'tech': 0.31437383592800566, 'bio': 0.05407952882456184,
-'pharma': 0.13957806647364773, 'auto': 0.10251699902607415, 'retail':
-0.03122666292627042, 'manufacturing': 0.025568468795771876\}
-IR hier\_is:  21.72164768576419
-IR hier\_oos:  20.585302751567717
-IR equal\_is:  16.334608097834664
-IR equal\_oos:  16.14347365872683
+IR gt\_is:  26.771132066373774
+IR gt\_oos:  28.159064152018402
+IR sm\_is:  110.09206477273513
+IR sm\_oos:  7.5479680514651175
+\{'banks': 0.044190128115900604, 'oil': 0.1276822372866994, 'insurance':
+0.038706296568006365, 'tech': 0.06337915844064392, 'bio': 0.13878794406853137,
+'pharma': 0.07518201151804653, 'auto': 0.07711013777617716, 'retail':
+0.25935387414437844, 'manufacturing': 0.1756082120816163\}
+IR hier\_is:  25.662726830273943
+IR hier\_oos:  25.388872828147313
+IR equal\_is:  13.832612014560612
+IR equal\_oos:  13.870769920429083
 MC run:  2
-IR gt\_is:  22.898593588631904
-IR gt\_oos:  24.81793868209896
-IR sm\_is:  92.13530611917427
-IR sm\_oos:  7.023607721552295
-\{'banks': 0.012727478982841565, 'oil': 0.1298031410912971, 'insurance':
-0.08402321976453021, 'tech': 0.12197948913655515, 'bio': 0.19117486045719584,
-'pharma': 0.2449844422880232, 'auto': 0.10318305557951167, 'retail':
-0.10458233928488639, 'manufacturing': 0.007541973415158882\}
-IR hier\_is:  22.614677127228017
-IR hier\_oos:  20.832201639311666
-IR equal\_is:  10.152899371981803
-IR equal\_oos:  8.557038995491695
+IR gt\_is:  22.12498465423602
+IR gt\_oos:  24.994628015545
+IR sm\_is:  73.95084565620881
+IR sm\_oos:  7.313627885190998
+\{'banks': 0.09533003742104401, 'oil': 0.13281804748440268, 'insurance':
+0.010599084773217502, 'tech': 0.1870967422369644, 'bio': 0.0430765017518334, 'pharma':
+0.019647395250293832, 'auto': 0.06477985552847948, 'retail': 0.21783365245635233,
+'manufacturing': 0.22881868309741218\}
+IR hier\_is:  21.445295159373668
+IR hier\_oos:  21.74898654991655
+IR equal\_is:  13.022774599594436
+IR equal\_oos:  13.431445532802027
 MC run:  3
-IR gt\_is:  24.226075720624188
-IR gt\_oos:  25.17534926287912
-IR sm\_is:  72.71040048334821
-IR sm\_oos:  10.80162959604957
-\{'banks': 0.04446499461729821, 'oil': 0.10251008614085398, 'insurance':
-0.01228147959832786, 'tech': 0.4463644803362729, 'bio': 0.049745698303080677,
-'pharma': 0.2437541747818386, 'auto': 0.020232478546664837, 'retail':
-0.06916138316382736, 'manufacturing': 0.011485224511835599\}
-IR hier\_is:  21.273039781724037
-IR hier\_oos:  20.174332249361626
-IR equal\_is:  6.897695450146542
-IR equal\_oos:  5.948558102245953
+IR gt\_is:  24.783685587866106
+IR gt\_oos:  23.964302612640793
+IR sm\_is:  76.90436023202933
+IR sm\_oos:  9.289079575452817
+\{'banks': 0.10178730748467713, 'oil': 0.12063615385680393, 'insurance':
+0.007842505585361351, 'tech': 0.13095328977379267, 'bio': 0.15555816144859244,
+'pharma': 0.2647333159484891, 'auto': 0.04527157255757351, 'retail':
+0.15598235608121774, 'manufacturing': 0.01723533726349217\}
+IR hier\_is:  23.11903322407622
+IR hier\_oos:  20.709967158211672
+IR equal\_is:  12.245319437972624
+IR equal\_oos:  11.768506071460667
 MC run:  4
-IR gt\_is:  22.47176220106334
-IR gt\_oos:  22.076205524532817
-IR sm\_is:  71.31430082387298
-IR sm\_oos:  5.77684577884029
-\{'banks': 0.13882612416254275, 'oil': 0.13751535739762402, 'insurance':
-0.047784372997667725, 'tech': 0.3160644145571731, 'bio': 0.03827014948041616,
-'pharma': 0.19184647320369733, 'auto': 0.044945218143515354, 'retail':
-0.004103569090263107, 'manufacturing': 0.08064432096710052\}
-IR hier\_is:  21.4003668898193
-IR hier\_oos:  19.618852819668398
-IR equal\_is:  9.203178199131479
-IR equal\_oos:  9.636011379780278
+IR gt\_is:  25.405717149410922
+IR gt\_oos:  23.83151324844424
+IR sm\_is:  71.91830187636323
+IR sm\_oos:  7.893799804413511
+\{'banks': 0.008331797624099297, 'oil': 0.1422152742418836, 'insurance':
+0.07117306958746743, 'tech': 0.05683536741120898, 'bio': 0.03093410182989959,
+'pharma': 0.30839849778761186, 'auto': 0.029121474729654418, 'retail':
+0.16156160489816657, 'manufacturing': 0.1914288118900083\}
+IR hier\_is:  22.047307244967097
+IR hier\_oos:  19.74034703920951
+IR equal\_is:  10.24930695194757
+IR equal\_oos:  9.26763811882215
+MC run:  5
+IR gt\_is:  23.774046760263385
+IR gt\_oos:  24.416799220816827
+IR sm\_is:  82.51159270276858
+IR sm\_oos:  7.073926437980247
+\{'banks': 0.019026711412274785, 'oil': 0.10069088719525802, 'insurance':
+0.01738849710027885, 'tech': 0.3363406418462935, 'bio': 0.11936447738914333, 'pharma':
+0.1903819517161351, 'auto': 0.05639672497940893, 'retail': 0.12447721248140026,
+'manufacturing': 0.03593289587980716\}
+IR hier\_is:  21.524876253053215
+IR hier\_oos:  20.608853356276203
+IR equal\_is:  10.847118607900063
+IR equal\_oos:  9.382224029908766
+MC run:  6
+IR gt\_is:  22.871741160100328
+IR gt\_oos:  22.487076322170182
+IR sm\_is:  64.75344379654321
+IR sm\_oos:  6.323567513587528
+\{'banks': 0.17029698533312862, 'oil': 0.21106271552184303, 'insurance':
+0.042080354837382324, 'tech': 0.03008387395067035, 'bio': 0.007005001847849584,
+'pharma': 0.3297258523256762, 'auto': 0.08767800263458783, 'retail':
+0.01150600681945518, 'manufacturing': 0.11056120672940697\}
+IR hier\_is:  20.82868495138105
+IR hier\_oos:  18.00323300546353
+IR equal\_is:  8.029881843476653
+IR equal\_oos:  7.893597017400724
+MC run:  7
+IR gt\_is:  22.9079517433364
+IR gt\_oos:  23.2071757725262
+IR sm\_is:  76.91780583251605
+IR sm\_oos:  6.088767171800019
+\{'banks': 0.007013241716007736, 'oil': 0.18128528150435333, 'insurance':
+0.011100832403692869, 'tech': 0.008538933940442348, 'bio': 0.12330362371058244,
+'pharma': 0.35716281397695776, 'auto': 0.09910541317827144, 'retail':
+0.19539604560933388, 'manufacturing': 0.01709381396035819\}
+IR hier\_is:  18.953515732558117
+IR hier\_oos:  17.30131100375008
+IR equal\_is:  5.550279675144221
+IR equal\_oos:  4.445961826692587
+MC run:  8
+IR gt\_is:  23.605123461477735
+IR gt\_oos:  23.264781570255654
+IR sm\_is:  66.61738057882724
+IR sm\_oos:  6.43578242236054
+\{'banks': 0.06607187976300144, 'oil': 0.04501823053835708, 'insurance':
+0.11938848460520698, 'tech': 0.023104508754752045, 'bio': 0.09762295910249473,
+'pharma': 0.18800636988316546, 'auto': 0.02543435582262118, 'retail':
+0.21784042489955452, 'manufacturing': 0.21751278663084656\}
+IR hier\_is:  23.804200363766427
+IR hier\_oos:  20.762433881352706
+IR equal\_is:  7.8827421616603885
+IR equal\_oos:  8.720606082070747
+MC run:  9
+IR gt\_is:  23.85084213207428
+IR gt\_oos:  26.2639814301371
+IR sm\_is:  81.30892790285837
+IR sm\_oos:  7.701145910218168
+\{'banks': 0.03027463504519667, 'oil': 0.1856023565331236, 'insurance':
+0.019317517946394445, 'tech': 0.14784769811725806, 'bio': 0.2838690145717053,
+'pharma': 0.07212580567407506, 'auto': 0.033317365127124576, 'retail':
+0.196812283035799, 'manufacturing': 0.030833323949323293\}
+IR hier\_is:  22.17972270765723
+IR hier\_oos:  22.014619742221665
+IR equal\_is:  8.934768780668415
+IR equal\_oos:  8.982252859122386
 
     \end{Verbatim}
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}10}]:} \PY{n}{data\PYZus{}a} \PY{o}{=} \PY{p}{[}\PY{n}{ir\PYZus{}sm\PYZus{}is}\PY{p}{,} \PY{n}{ir\PYZus{}hier\PYZus{}is}\PY{p}{,} \PY{n}{ir\PYZus{}gt\PYZus{}is}\PY{p}{,} \PY{n}{ir\PYZus{}equal\PYZus{}is}\PY{p}{]}
-         \PY{n}{data\PYZus{}b} \PY{o}{=} \PY{p}{[}\PY{n}{ir\PYZus{}sm\PYZus{}oos}\PY{p}{,} \PY{n}{ir\PYZus{}hier\PYZus{}oos}\PY{p}{,} \PY{n}{ir\PYZus{}gt\PYZus{}oos}\PY{p}{,} \PY{n}{ir\PYZus{}equal\PYZus{}oos}\PY{p}{]}
-         
-         \PY{n}{ticks} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Markowitz}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Hierarchical}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Ground Truth}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Equal Weighted}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         
-         \PY{k}{def} \PY{n+nf}{set\PYZus{}box\PYZus{}color}\PY{p}{(}\PY{n}{bp}\PY{p}{,} \PY{n}{color}\PY{p}{)}\PY{p}{:}
-             \PY{n}{plt}\PY{o}{.}\PY{n}{setp}\PY{p}{(}\PY{n}{bp}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{boxes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{n}{color}\PY{p}{)}
-             \PY{n}{plt}\PY{o}{.}\PY{n}{setp}\PY{p}{(}\PY{n}{bp}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{whiskers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{n}{color}\PY{p}{)}
-             \PY{n}{plt}\PY{o}{.}\PY{n}{setp}\PY{p}{(}\PY{n}{bp}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{caps}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{n}{color}\PY{p}{)}
-             \PY{n}{plt}\PY{o}{.}\PY{n}{setp}\PY{p}{(}\PY{n}{bp}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{medians}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{n}{color}\PY{p}{)}
-         
-         \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{p}{)}
-         
-         \PY{n}{bp1} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{data\PYZus{}a}\PY{p}{,} \PY{n}{positions}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{data\PYZus{}a}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{*}\PY{l+m+mf}{2.0}\PY{o}{\PYZhy{}}\PY{l+m+mf}{0.4}\PY{p}{,} \PY{n}{sym}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-         \PY{n}{widths}\PY{o}{=}\PY{l+m+mf}{0.6}\PY{p}{)}
-         \PY{n}{bp2} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{data\PYZus{}b}\PY{p}{,} \PY{n}{positions}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{data\PYZus{}b}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{*}\PY{l+m+mf}{2.0}\PY{o}{+}\PY{l+m+mf}{0.4}\PY{p}{,} \PY{n}{sym}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-         \PY{n}{widths}\PY{o}{=}\PY{l+m+mf}{0.6}\PY{p}{)}
-         
-         \PY{n}{set\PYZus{}box\PYZus{}color}\PY{p}{(}\PY{n}{bp1}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}D7191C}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{c+c1}{\PYZsh{} colors are from http://colorbrewer2.org/}
-         \PY{n}{set\PYZus{}box\PYZus{}color}\PY{p}{(}\PY{n}{bp2}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}2C7BB6}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         
-         \PY{c+c1}{\PYZsh{} draw temporary red and blue lines and use them to create a legend}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{n}{c}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}D7191C}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{IS}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{n}{c}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}2C7BB6}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{OOS}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Markowitz vs. Hierarchical }\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Information Ratio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{xticks}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{ticks}\PY{p}{)} \PY{o}{*} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{,} \PY{n}{ticks}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{xlim}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{ticks}\PY{p}{)}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)}
-         \PY{c+c1}{\PYZsh{} plt.ylim(0, 8)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
-         \PY{c+c1}{\PYZsh{} plt.savefig(\PYZsq{}boxcompare.png\PYZsq{})}
+{\color{incolor}In [{\color{incolor}9}]:} \PY{n}{data\PYZus{}a} \PY{o}{=} \PY{p}{[}\PY{n}{ir\PYZus{}sm\PYZus{}is}\PY{p}{,} \PY{n}{ir\PYZus{}hier\PYZus{}is}\PY{p}{,} \PY{n}{ir\PYZus{}gt\PYZus{}is}\PY{p}{,} \PY{n}{ir\PYZus{}equal\PYZus{}is}\PY{p}{]}
+        \PY{n}{data\PYZus{}b} \PY{o}{=} \PY{p}{[}\PY{n}{ir\PYZus{}sm\PYZus{}oos}\PY{p}{,} \PY{n}{ir\PYZus{}hier\PYZus{}oos}\PY{p}{,} \PY{n}{ir\PYZus{}gt\PYZus{}oos}\PY{p}{,} \PY{n}{ir\PYZus{}equal\PYZus{}oos}\PY{p}{]}
+        
+        \PY{n}{ticks} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Markowitz}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Hierarchical}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Ground Truth}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Equal Weighted}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+        
+        \PY{k}{def} \PY{n+nf}{set\PYZus{}box\PYZus{}color}\PY{p}{(}\PY{n}{bp}\PY{p}{,} \PY{n}{color}\PY{p}{)}\PY{p}{:}
+            \PY{n}{plt}\PY{o}{.}\PY{n}{setp}\PY{p}{(}\PY{n}{bp}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{boxes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{n}{color}\PY{p}{)}
+            \PY{n}{plt}\PY{o}{.}\PY{n}{setp}\PY{p}{(}\PY{n}{bp}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{whiskers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{n}{color}\PY{p}{)}
+            \PY{n}{plt}\PY{o}{.}\PY{n}{setp}\PY{p}{(}\PY{n}{bp}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{caps}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{n}{color}\PY{p}{)}
+            \PY{n}{plt}\PY{o}{.}\PY{n}{setp}\PY{p}{(}\PY{n}{bp}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{medians}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{n}{color}\PY{p}{)}
+        
+        \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{p}{)}
+        
+        \PY{n}{bp1} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{data\PYZus{}a}\PY{p}{,} \PY{n}{positions}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{data\PYZus{}a}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{*}\PY{l+m+mf}{2.0}\PY{o}{\PYZhy{}}\PY{l+m+mf}{0.4}\PY{p}{,} \PY{n}{sym}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+        \PY{n}{widths}\PY{o}{=}\PY{l+m+mf}{0.6}\PY{p}{)}
+        \PY{n}{bp2} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{data\PYZus{}b}\PY{p}{,} \PY{n}{positions}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{data\PYZus{}b}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{*}\PY{l+m+mf}{2.0}\PY{o}{+}\PY{l+m+mf}{0.4}\PY{p}{,} \PY{n}{sym}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+        \PY{n}{widths}\PY{o}{=}\PY{l+m+mf}{0.6}\PY{p}{)}
+        
+        \PY{n}{set\PYZus{}box\PYZus{}color}\PY{p}{(}\PY{n}{bp1}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}D7191C}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{c+c1}{\PYZsh{} colors are from http://colorbrewer2.org/}
+        \PY{n}{set\PYZus{}box\PYZus{}color}\PY{p}{(}\PY{n}{bp2}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}2C7BB6}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} draw temporary red and blue lines and use them to create a legend}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{n}{c}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}D7191C}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{IS}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{n}{c}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}2C7BB6}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{OOS}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Markowitz vs. Hierarchical }\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Information Ratio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{xticks}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{ticks}\PY{p}{)} \PY{o}{*} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{,} \PY{n}{ticks}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{xlim}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{ticks}\PY{p}{)}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{} plt.ylim(0, 8)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{} plt.savefig(\PYZsq{}boxcompare.png\PYZsq{})}
 \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_16_0.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_15_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}11}]:} \PY{n}{performance\PYZus{}factor} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}equal\PYZus{}oos}\PY{p}{)}\PY{o}{/}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}sm\PYZus{}oos}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}10}]:} \PY{n}{performance\PYZus{}factor} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}equal\PYZus{}oos}\PY{p}{)}\PY{o}{/}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}sm\PYZus{}oos}\PY{p}{)}
          \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{OOS Equal / Markowitz: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{performance\PYZus{}factor}\PY{p}{)}
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-OOS Equal / Markowitz:  1.3192494270659583
+OOS Equal / Markowitz:  1.3139788078185306
 
     \end{Verbatim}
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}12}]:} \PY{n}{performance\PYZus{}factor} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}hier\PYZus{}oos}\PY{p}{)}\PY{o}{/}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}sm\PYZus{}oos}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}11}]:} \PY{n}{performance\PYZus{}factor} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}hier\PYZus{}oos}\PY{p}{)}\PY{o}{/}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}sm\PYZus{}oos}\PY{p}{)}
          \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{OOS Hierarchical / Markowitz: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{performance\PYZus{}factor}\PY{p}{)}
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-OOS Hierarchical / Markowitz:  2.662409505487703
+OOS Hierarchical / Markowitz:  2.8762212329272607
 
     \end{Verbatim}
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}13}]:} \PY{n}{performance\PYZus{}factor} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}hier\PYZus{}oos}\PY{p}{)}\PY{o}{/}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}equal\PYZus{}oos}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}12}]:} \PY{n}{performance\PYZus{}factor} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}hier\PYZus{}oos}\PY{p}{)}\PY{o}{/}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}equal\PYZus{}oos}\PY{p}{)}
          \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{OOS Hierarchical / Equal: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{performance\PYZus{}factor}\PY{p}{)}
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-OOS Hierarchical / Equal:  2.0181244356565418
+OOS Hierarchical / Equal:  2.1889403511022882
 
     \end{Verbatim}
 
@@ -1087,11 +1160,12 @@ that in this context equal weighting does not imply blindly allocating
 equal weights to longs and short \emph{regardless of the industry}.
 Instead, it assumes that in a prior step the alpha model picked roughly
 equal numbers of longs and shorts of a certain industry. This follows
-since the deterministic trend \(\mu\) is sampled uniformly. It is more
-appropriately thought of as a industry-matched equal weighting scheme.
+since the deterministic trend \(\mu\) is sampled uniformly with mean
+zero. It is more appropriately thought of as a industry-matched equal
+weighting scheme.
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}14}]:} \PY{c+c1}{\PYZsh{} create a portfolio object and print some method outputs}
+{\color{incolor}In [{\color{incolor}13}]:} \PY{c+c1}{\PYZsh{} create a portfolio object and print some method outputs}
          \PY{n}{pf} \PY{o}{=} \PY{n}{Portfolio}\PY{p}{(}\PY{n}{assets}\PY{o}{=}\PY{n}{weights}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{,}
                         \PY{n}{position}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{n}{weights}\PY{p}{)}\PY{p}{,}
                         \PY{n}{price}\PY{o}{=}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{*}\PY{n+nb}{len}\PY{p}{(}\PY{n}{weights}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{,}
@@ -1104,48 +1178,48 @@ appropriately thought of as a industry-matched equal weighting scheme.
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-Portfolio: 450 Assets, \$43.76 Long, \$43.76 Short
-largest long: oil\_stock\_13 0.6417725939631443
-largest short: auto\_stock\_20 -0.9752070715541381
+Portfolio: 450 Assets, \$59.96 Long, \$59.96 Short
+largest long: banks\_stock\_45 0.9999573360418466
+largest short: insurance\_stock\_40 -0.9249530915414368
 sector\_net\_exposures:
             position\_value
 sector\_id
-aut             -0.295522
-ban             -0.405407
-bio             -0.373189
-ins              1.011198
-man             -1.089961
-oil             -0.484716
-pha              0.945934
-ret             -0.201969
-tec              0.893630
+aut             -0.398064
+ban              0.166075
+bio             -0.423796
+ins             -0.594435
+man              0.690644
+oil             -1.106129
+pha              1.326872
+ret              0.459944
+tec             -0.121112
 
     \end{Verbatim}
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}15}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{pf}\PY{o}{.}\PY{n}{portfolio\PYZus{}df}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}14}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{pf}\PY{o}{.}\PY{n}{portfolio\PYZus{}df}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-                    position  price  factor\_value sector\_id  position\_value
-oil\_stock\_13        0.641773      1           1.0       oil        0.641773
-insurance\_stock\_17  0.622193      1           1.0       ins        0.622193
-tech\_stock\_14       0.569854      1           1.0       tec        0.569854
-retail\_stock\_23     0.563937      1           1.0       ret        0.563937
-tech\_stock\_21       0.546087      1           1.0       tec        0.546087
+                       position  price  factor\_value sector\_id  position\_value
+banks\_stock\_45         0.999957      1           1.0       ban        0.999957
+insurance\_stock\_14     0.879602      1           1.0       ins        0.879602
+manufacturing\_stock\_2  0.791352      1           1.0       man        0.791352
+pharma\_stock\_44        0.750419      1           1.0       pha        0.750419
+insurance\_stock\_4      0.696782      1           1.0       ins        0.696782
 
     \end{Verbatim}
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}16}]:} \PY{n}{pf}\PY{o}{.}\PY{n}{portfolio\PYZus{}df}\PY{o}{.}\PY{n}{position\PYZus{}value}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{style}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}15}]:} \PY{n}{pf}\PY{o}{.}\PY{n}{portfolio\PYZus{}df}\PY{o}{.}\PY{n}{position\PYZus{}value}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{style}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
 \end{Verbatim}
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}16}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x1a176fab38>
+{\color{outcolor}Out[{\color{outcolor}15}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x1a1bc1e438>
 \end{Verbatim}
             
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_23_1.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_22_1.png}
     \end{center}
     { \hspace*{\fill} \\}
     
@@ -1153,18 +1227,18 @@ tech\_stock\_21       0.546087      1           1.0       tec        0.546087
 \subsection{Principal Component
 Analysis}\label{principal-component-analysis}}
 
-Principal Component Analysis (PCA) allows us to reduce the dimension of
-the covariance matrix. Since the covariance matrix is symmetric we can
+Principal Component Analysis (PCA) allows us to reduce the rank of the
+covariance matrix. Since the covariance matrix is symmetric we can
 decompose the matrix into its real eigenvalues and orthonormal
 eigenvectors. This follows from the spectral theorem.
 \[S=Q \Lambda Q^{-1}=Q \Lambda Q^{\mathrm{T}} \quad \text { with } \quad Q^{-1}=Q^{\mathrm{T}}\]
 In the simulation we have exposure to the market and several industries.
-Thus it makes sense to reduce the dimension to the number of these
-variables. Plotting the proportion of variance explained by the first n
-principal components confirms this hypothesis.
+Thus it makes sense to reduce the rank to the number of these variables.
+Plotting the proportion of variance explained by the first n principal
+components confirms this hypothesis.
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}17}]:} \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{decomposition} \PY{k}{import} \PY{n}{PCA} \PY{k}{as} \PY{n}{sklearnPCA}
+{\color{incolor}In [{\color{incolor}16}]:} \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{decomposition} \PY{k}{import} \PY{n}{PCA} \PY{k}{as} \PY{n}{sklearnPCA}
          
          \PY{n}{n\PYZus{}components} \PY{o}{=} \PY{l+m+mi}{20}
          \PY{n}{sklearn\PYZus{}pca} \PY{o}{=} \PY{n}{sklearnPCA}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{n}{n\PYZus{}components}\PY{p}{)}
@@ -1176,12 +1250,12 @@ principal components confirms this hypothesis.
 \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_25_0.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_24_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}18}]:} \PY{c+c1}{\PYZsh{} denoise covariance matrix}
+{\color{incolor}In [{\color{incolor}17}]:} \PY{c+c1}{\PYZsh{} denoise covariance matrix}
          \PY{n}{cov} \PY{o}{=} \PY{n}{stocks\PYZus{}all}\PY{o}{.}\PY{n}{cov}\PY{p}{(}\PY{p}{)}
          \PY{n}{n} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{industries}\PY{p}{)}\PY{o}{+}\PY{l+m+mi}{1}
          
@@ -1193,35 +1267,35 @@ principal components confirms this hypothesis.
 \end{Verbatim}
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}19}]:} \PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+{\color{incolor}In [{\color{incolor}18}]:} \PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
          \PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{pc\PYZus{}cov}\PY{p}{,} \PY{n}{xticklabels}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{yticklabels}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
 \end{Verbatim}
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}19}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x1a17c6beb8>
+{\color{outcolor}Out[{\color{outcolor}18}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x1a1c868ba8>
 \end{Verbatim}
             
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_27_1.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_26_1.png}
     \end{center}
     { \hspace*{\fill} \\}
     
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}20}]:} \PY{c+c1}{\PYZsh{} plot sample covariance matrix to compare}
+{\color{incolor}In [{\color{incolor}19}]:} \PY{c+c1}{\PYZsh{} plot sample covariance matrix to compare}
          \PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{cov}\PY{p}{,} \PY{n}{xticklabels}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{yticklabels}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
 \end{Verbatim}
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}20}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x1a1a13afd0>
+{\color{outcolor}Out[{\color{outcolor}19}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x1a1c0dc898>
 \end{Verbatim}
             
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_28_1.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_27_1.png}
     \end{center}
     { \hspace*{\fill} \\}
     
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}21}]:} \PY{c+c1}{\PYZsh{} compute ground truth covariance matrix to compare}
+{\color{incolor}In [{\color{incolor}20}]:} \PY{c+c1}{\PYZsh{} compute ground truth covariance matrix to compare}
          \PY{n}{Sigma\PYZus{}f} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{diag}\PY{p}{(}\PY{p}{[}\PY{n}{sigma}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{sigma}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{]}\PY{p}{)}
          \PY{n}{Sigma\PYZus{}e} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{diag}\PY{p}{(}\PY{p}{[}\PY{n}{sigma\PYZus{}noise}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{]}\PY{o}{*}\PY{n}{B}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
          \PY{n}{cov\PYZus{}truth} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{B}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{Sigma\PYZus{}f}\PY{p}{)}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{n}{B}\PY{p}{)}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{n}{Sigma\PYZus{}e}
@@ -1229,11 +1303,11 @@ principal components confirms this hypothesis.
 \end{Verbatim}
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}21}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x181551ee48>
+{\color{outcolor}Out[{\color{outcolor}20}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x1a1d5a6390>
 \end{Verbatim}
             
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_29_1.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_28_1.png}
     \end{center}
     { \hspace*{\fill} \\}
     
@@ -1241,7 +1315,7 @@ principal components confirms this hypothesis.
 other components.
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}22}]:} \PY{n}{trainig\PYZus{}pct} \PY{o}{=} \PY{l+m+mf}{0.5}
+{\color{incolor}In [{\color{incolor}21}]:} \PY{n}{trainig\PYZus{}pct} \PY{o}{=} \PY{l+m+mf}{0.5}
          \PY{n}{n\PYZus{}train} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{n}{trainig\PYZus{}pct}\PY{o}{*}\PY{n}{num\PYZus{}samples}\PY{p}{)}
          \PY{n}{ir\PYZus{}sm\PYZus{}is} \PY{o}{=} \PY{p}{[}\PY{p}{]}
          \PY{n}{ir\PYZus{}sm\PYZus{}oos} \PY{o}{=} \PY{p}{[}\PY{p}{]}
@@ -1365,8 +1439,8 @@ other components.
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
 MC run:  0
-IR gt\_is:  23.374207157554075
-IR gt\_oos:  24.22487984962384
+IR gt\_is:  23.928091331371824
+IR gt\_oos:  25.690924746070923
 
     \end{Verbatim}
 
@@ -1378,43 +1452,78 @@ converge.
     \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR sm\_is:  82.50759694936612
-IR sm\_oos:  7.0057612696101375
-IR pca\_is:  22.216859381000006
-IR pca\_oos:  22.595827859949612
+IR sm\_is:  70.31358258914639
+IR sm\_oos:  8.820658092799544
+IR pca\_is:  23.02183181140094
+IR pca\_oos:  24.185608362682228
 MC run:  1
-IR gt\_is:  25.418134789859575
-IR gt\_oos:  24.240600658640563
-IR sm\_is:  95.76372494651923
-IR sm\_oos:  5.958420678047078
-IR pca\_is:  23.91078700478066
-IR pca\_oos:  22.990440378515917
+IR gt\_is:  23.483157047813364
+IR gt\_oos:  23.201994695294516
+IR sm\_is:  84.1651737323713
+IR sm\_oos:  7.706546516065167
+IR pca\_is:  21.41364071779635
+IR pca\_oos:  21.43571944493367
 MC run:  2
-IR gt\_is:  23.56364989642909
-IR gt\_oos:  23.990022007140244
-IR sm\_is:  79.0767690999176
-IR sm\_oos:  6.901858131089847
-IR pca\_is:  21.420330187631972
-IR pca\_oos:  22.030064199104288
+IR gt\_is:  22.28053644927649
+IR gt\_oos:  23.381364215926908
+IR sm\_is:  77.93833732468957
+IR sm\_oos:  7.749301682353445
+IR pca\_is:  21.432762259498002
+IR pca\_oos:  21.81894849118108
 MC run:  3
-IR gt\_is:  23.3874383590086
-IR gt\_oos:  25.244127982411683
-IR sm\_is:  70.68916364298254
-IR sm\_oos:  7.902184405991386
-IR pca\_is:  21.75082366746542
-IR pca\_oos:  24.393423066434213
+IR gt\_is:  23.455531871051292
+IR gt\_oos:  24.01300349901305
+IR sm\_is:  65.42997462402077
+IR sm\_oos:  7.6775763122535405
+IR pca\_is:  23.021110673153178
+IR pca\_oos:  22.849885724873147
 MC run:  4
-IR gt\_is:  27.290745199005972
-IR gt\_oos:  25.02578210149913
-IR sm\_is:  85.04175309422818
-IR sm\_oos:  8.154456369030104
-IR pca\_is:  26.925445403425606
-IR pca\_oos:  22.825455393641207
+IR gt\_is:  24.184545118553274
+IR gt\_oos:  24.30887580550335
+IR sm\_is:  69.11615485823607
+IR sm\_oos:  10.487583844591857
+IR pca\_is:  22.93057948612109
+IR pca\_oos:  23.17622141063133
+MC run:  5
+IR gt\_is:  26.414787971437303
+IR gt\_oos:  22.95311175767001
+IR sm\_is:  76.88479408716702
+IR sm\_oos:  8.81001811360005
+IR pca\_is:  24.65964285823324
+IR pca\_oos:  21.08724797685001
+MC run:  6
+IR gt\_is:  23.117734276665452
+IR gt\_oos:  24.539536043691076
+IR sm\_is:  65.50914915015383
+IR sm\_oos:  7.497741821965262
+IR pca\_is:  21.859366534100225
+IR pca\_oos:  22.482987575194088
+MC run:  7
+IR gt\_is:  22.488948436840026
+IR gt\_oos:  22.576062710794744
+IR sm\_is:  75.00567964723727
+IR sm\_oos:  6.4545595153664825
+IR pca\_is:  21.597449811693807
+IR pca\_oos:  21.12812007140757
+MC run:  8
+IR gt\_is:  21.87509337251639
+IR gt\_oos:  24.458493756190276
+IR sm\_is:  64.5012049016925
+IR sm\_oos:  8.950179482518198
+IR pca\_is:  20.792584629494716
+IR pca\_oos:  22.675317968867915
+MC run:  9
+IR gt\_is:  22.947254544337085
+IR gt\_oos:  23.545244952815107
+IR sm\_is:  76.48684538500122
+IR sm\_oos:  6.737335116130717
+IR pca\_is:  21.517691968484655
+IR pca\_oos:  21.664761442031843
 
     \end{Verbatim}
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}23}]:} \PY{n}{data\PYZus{}a} \PY{o}{=} \PY{p}{[}\PY{n}{ir\PYZus{}sm\PYZus{}is}\PY{p}{,} \PY{n}{ir\PYZus{}pca\PYZus{}is}\PY{p}{,} \PY{n}{ir\PYZus{}gt\PYZus{}is}\PY{p}{]}
+{\color{incolor}In [{\color{incolor}22}]:} \PY{n}{data\PYZus{}a} \PY{o}{=} \PY{p}{[}\PY{n}{ir\PYZus{}sm\PYZus{}is}\PY{p}{,} \PY{n}{ir\PYZus{}pca\PYZus{}is}\PY{p}{,} \PY{n}{ir\PYZus{}gt\PYZus{}is}\PY{p}{]}
          \PY{n}{data\PYZus{}b} \PY{o}{=} \PY{p}{[}\PY{n}{ir\PYZus{}sm\PYZus{}oos}\PY{p}{,} \PY{n}{ir\PYZus{}pca\PYZus{}oos}\PY{p}{,} \PY{n}{ir\PYZus{}gt\PYZus{}oos}\PY{p}{]}
          
          \PY{n}{ticks} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Markowitz}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PCA}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Ground Truth}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
@@ -1449,22 +1558,22 @@ IR pca\_oos:  22.825455393641207
 \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_32_0.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_31_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}24}]:} \PY{n}{performance\PYZus{}factor} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}pca\PYZus{}oos}\PY{p}{)}\PY{o}{/}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}sm\PYZus{}oos}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}23}]:} \PY{n}{performance\PYZus{}factor} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}pca\PYZus{}oos}\PY{p}{)}\PY{o}{/}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{ir\PYZus{}sm\PYZus{}oos}\PY{p}{)}
          \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{OOS PCA / Markowitz: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{performance\PYZus{}factor}\PY{p}{)}
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-OOS PCA / Markowitz:  3.1967327651604864
+OOS PCA / Markowitz:  2.750657573413819
 
     \end{Verbatim}
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}25}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{matrix\PYZus{}rank}\PY{p}{(}\PY{n}{cov}\PY{p}{)}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}24}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{matrix\PYZus{}rank}\PY{p}{(}\PY{n}{cov}\PY{p}{)}\PY{p}{)}
          \PY{n+nb}{print}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{matrix\PYZus{}rank}\PY{p}{(}\PY{n}{pc\PYZus{}cov}\PY{p}{)}\PY{p}{)}
 \end{Verbatim}
 
@@ -1475,7 +1584,7 @@ OOS PCA / Markowitz:  3.1967327651604864
     \end{Verbatim}
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}26}]:} \PY{n}{pf} \PY{o}{=} \PY{n}{Portfolio}\PY{p}{(}\PY{n}{assets}\PY{o}{=}\PY{n}{weights}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+{\color{incolor}In [{\color{incolor}25}]:} \PY{n}{pf} \PY{o}{=} \PY{n}{Portfolio}\PY{p}{(}\PY{n}{assets}\PY{o}{=}\PY{n}{weights}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{,}
                         \PY{n}{position}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{n}{weights}\PY{p}{)}\PY{p}{,}
                         \PY{n}{price}\PY{o}{=}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{*}\PY{n+nb}{len}\PY{p}{(}\PY{n}{weights}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{,}
                         \PY{n}{sector\PYZus{}id}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{weights}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{str}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{3}\PY{p}{]}\PY{o}{.}\PY{n}{values}\PY{p}{)}
@@ -1486,34 +1595,34 @@ OOS PCA / Markowitz:  3.1967327651604864
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-Portfolio: 450 Assets, \$130.53 Long, \$130.53 Short
-largest long: manufacturing\_stock\_40 0.9044735707106419
-largest short: insurance\_stock\_31 -0.8883571288891736
+Portfolio: 450 Assets, \$131.33 Long, \$131.33 Short
+largest long: bio\_stock\_18 0.8707197141374607
+largest short: bio\_stock\_10 -0.8608912496009911
 sector\_net\_exposures:
             position\_value
 sector\_id
-aut             -0.595581
-ban             -0.018102
-bio              2.715188
-ins             -1.293434
-man              0.030597
-oil              2.145395
-pha             -2.739619
-ret              1.563692
-tec             -1.808135
+aut              0.409164
+ban             -1.761326
+bio              2.450520
+ins              0.550541
+man             -1.168924
+oil             -1.701275
+pha              0.933427
+ret              2.341407
+tec             -2.053537
 
     \end{Verbatim}
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}27}]:} \PY{n}{pf}\PY{o}{.}\PY{n}{portfolio\PYZus{}df}\PY{o}{.}\PY{n}{position\PYZus{}value}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{style}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}26}]:} \PY{n}{pf}\PY{o}{.}\PY{n}{portfolio\PYZus{}df}\PY{o}{.}\PY{n}{position\PYZus{}value}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{style}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
 \end{Verbatim}
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}27}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x1a1a506f28>
+{\color{outcolor}Out[{\color{outcolor}26}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x1a1b76bbe0>
 \end{Verbatim}
             
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_36_1.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_35_1.png}
     \end{center}
     { \hspace*{\fill} \\}
     
@@ -1534,10 +1643,10 @@ The unconditional variance becomes:
 
 \(\begin{array}{l}{\text { Solving for } \mathrm{E}\left(\sigma_{t}^{2}\right), \text { we have the unconditional variance }} \\ {\qquad \begin{aligned} \mathrm{E}\left(\epsilon_{t}^{2}\right) &=\mathrm{E}\left(\sigma_{t}^{2}\right) \\ &=\frac{\omega}{1-\sum_{i=1}^{q} \alpha_{i}-\sum_{i=1}^{p} \beta_{i}} \end{aligned}}\end{array}\)
 
-Equity curves under this nise distribution look like this.
+Equity curves under this noise distribution look like this.
 
    \begin{Verbatim}[commandchars=\\\{\},fontsize=\scriptsize]
-{\color{incolor}In [{\color{incolor}36}]:} \PY{n}{n\PYZus{}stocks} \PY{o}{=} \PY{l+m+mi}{50}
+{\color{incolor}In [{\color{incolor}27}]:} \PY{n}{n\PYZus{}stocks} \PY{o}{=} \PY{l+m+mi}{50}
          \PY{n}{garch\PYZus{}mu} \PY{o}{=} \PY{l+m+mi}{0}
          \PY{n}{garch\PYZus{}alpha} \PY{o}{=} \PY{l+m+mf}{0.5}
          \PY{n}{garch\PYZus{}beta} \PY{o}{=} \PY{l+m+mf}{0.3}
@@ -1550,7 +1659,7 @@ Equity curves under this nise distribution look like this.
 \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_39_0.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_38_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
@@ -1736,8 +1845,8 @@ under a GARCH(1,1) noise distribution.
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
 MC run:  0
-IR gt\_is:  10.314924137730154
-IR gt\_oos:  11.219773222633183
+IR gt\_is:  11.381839784897373
+IR gt\_oos:  10.25005811476404
 
     \end{Verbatim}
 
@@ -1749,68 +1858,133 @@ converge.
     \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR sm\_is:  44.07406918703761
-IR sm\_oos:  3.299182310696336
-\{'banks': 0.15967829378891055, 'oil': 0.1636020654087193, 'insurance':
-0.04078337564155619, 'tech': 0.2508566420893103, 'bio': 0.09343134145129015, 'pharma':
-0.05204879547856919, 'auto': 0.053656763591487855, 'retail': 0.15069582320238875,
-'manufacturing': 0.03524689934776772\}
-IR hier\_is:  10.687466946383722
-IR hier\_oos:  10.355871865738731
-IR equal\_is:  8.646609676920752
-IR equal\_oos:  7.736393224746492
+IR sm\_is:  36.63963061230803
+IR sm\_oos:  4.447973650722289
+\{'banks': 0.05778225231788303, 'oil': 0.10428342897861984, 'insurance':
+0.07543521741571599, 'tech': 0.31587014916029615, 'bio': 0.050455000852612675,
+'pharma': 0.15935180704660465, 'auto': 0.04333117964647641, 'retail':
+0.18252817857797649, 'manufacturing': 0.010962786003814857\}
+IR hier\_is:  11.198458124852193
+IR hier\_oos:  8.235602345763404
+IR equal\_is:  7.580915620590376
+IR equal\_oos:  6.703342353268531
 MC run:  1
-IR gt\_is:  10.174839063328545
-IR gt\_oos:  9.964522319055435
-IR sm\_is:  33.77882119655665
-IR sm\_oos:  2.4542785693304356
-\{'banks': 0.0795117291238569, 'oil': 0.14235509568143997, 'insurance':
-0.14007480362066402, 'tech': 0.06853274182949477, 'bio': 0.08809651316811047,
-'pharma': 0.20047352348159514, 'auto': 0.07015826481167935, 'retail':
-0.16301195251625608, 'manufacturing': 0.04778537576690336\}
-IR hier\_is:  10.98426987771284
-IR hier\_oos:  8.69865353488074
-IR equal\_is:  8.060779706831138
-IR equal\_oos:  7.9023600364309345
+IR gt\_is:  9.427480157674227
+IR gt\_oos:  12.04492945891945
+IR sm\_is:  27.499891349533453
+IR sm\_oos:  4.447499004304111
+\{'banks': 0.06433997473727043, 'oil': 0.05918855736535658, 'insurance':
+0.053130060258645535, 'tech': 0.32265337949361256, 'bio': 0.07564121246094861,
+'pharma': 0.19243461205111537, 'auto': 0.0835758149828067, 'retail':
+0.10935979291778583, 'manufacturing': 0.03967659573245841\}
+IR hier\_is:  9.347236155451956
+IR hier\_oos:  10.332460710116338
+IR equal\_is:  6.045709074937399
+IR equal\_oos:  6.950190038983944
 MC run:  2
-IR gt\_is:  11.584320797566154
-IR gt\_oos:  10.713938421161808
-IR sm\_is:  61.391905413003606
-IR sm\_oos:  2.77196109978414
-\{'banks': 0.11744003832461196, 'oil': 0.0833591642101323, 'insurance':
-0.04207044533458641, 'tech': 0.15800493451150344, 'bio': 0.19528268451668537,
-'pharma': 0.18413031367391863, 'auto': 0.055619872788576386, 'retail':
-0.1033814383975889, 'manufacturing': 0.06071110824239664\}
-IR hier\_is:  12.567557047983506
-IR hier\_oos:  8.935635490111618
-IR equal\_is:  7.163851823883613
-IR equal\_oos:  6.89399462412708
+IR gt\_is:  11.495035744085095
+IR gt\_oos:  10.326510454283552
+IR sm\_is:  37.81650733172764
+IR sm\_oos:  4.6807904980900155
+\{'banks': 0.12907389111307793, 'oil': 0.11710363764998055, 'insurance':
+0.09084238467002748, 'tech': 0.1749535621009709, 'bio': 0.06683672435545432, 'pharma':
+0.24160239479144172, 'auto': 0.05556876003657864, 'retail': 0.04552629225782874,
+'manufacturing': 0.07849235302463957\}
+IR hier\_is:  12.783302981964487
+IR hier\_oos:  9.905665791267666
+IR equal\_is:  6.3807942867290315
+IR equal\_oos:  5.414102910618966
 MC run:  3
-IR gt\_is:  10.510696822965606
-IR gt\_oos:  9.917822616448193
-IR sm\_is:  23.24424801054156
-IR sm\_oos:  2.85689345810808
-\{'banks': 0.057071875629943064, 'oil': 0.13811942257648732, 'insurance':
-0.06719395752458439, 'tech': 0.10928283339768104, 'bio': 0.1724985366005242, 'pharma':
-0.14528957407974658, 'auto': 0.09567592998414085, 'retail': 0.05167713025092805,
-'manufacturing': 0.16319073995596442\}
-IR hier\_is:  11.392469285226964
-IR hier\_oos:  8.57303516322006
-IR equal\_is:  6.9072710495518
-IR equal\_oos:  5.615288496477106
+IR gt\_is:  11.17564352096621
+IR gt\_oos:  9.213171446595831
+IR sm\_is:  43.32939425983168
+IR sm\_oos:  3.3037538831891653
+\{'banks': 0.02680541279426938, 'oil': 0.06408584330920583, 'insurance':
+0.07067009006568603, 'tech': 0.08334107671773831, 'bio': 0.01666844778347558,
+'pharma': 0.3354506367659482, 'auto': 0.0719435939908445, 'retail':
+0.2408071285866011, 'manufacturing': 0.09022776998623104\}
+IR hier\_is:  10.495916818712914
+IR hier\_oos:  8.243207986145178
+IR equal\_is:  7.139216341552791
+IR equal\_oos:  6.162957550168578
 MC run:  4
-IR gt\_is:  9.412876464600133
-IR gt\_oos:  10.85642244057754
-IR sm\_is:  31.691928838527556
-IR sm\_oos:  3.6671934307537186
-\{'banks': 0.07644752817679888, 'oil': 0.17235966474892608, 'insurance':
-0.05912214359740948, 'tech': 0.06594169325594036, 'bio': 0.06702133246179037,
-'pharma': 0.3639364249129581, 'auto': 0.07309227555950167, 'retail':
-0.032910189667125986, 'manufacturing': 0.08916874761954892\}
-IR hier\_is:  10.165432999344953
-IR hier\_oos:  8.796881195995462
-IR equal\_is:  6.183074202060472
-IR equal\_oos:  6.44793905253365
+IR gt\_is:  11.01799937180968
+IR gt\_oos:  11.822311610672777
+IR sm\_is:  43.929621234522926
+IR sm\_oos:  4.374620503352312
+\{'banks': 0.08166488979222801, 'oil': 0.021013901560859975, 'insurance':
+0.03401438499587243, 'tech': 0.07556887845240953, 'bio': 0.1018213957840598, 'pharma':
+0.4733388205338499, 'auto': 0.06013865550315474, 'retail': 0.11102671202606172,
+'manufacturing': 0.0414123613515039\}
+IR hier\_is:  10.472858271545643
+IR hier\_oos:  10.073861982124532
+IR equal\_is:  5.99842921746639
+IR equal\_oos:  7.3294468896598834
+MC run:  5
+IR gt\_is:  10.103824220304778
+IR gt\_oos:  11.421185324211141
+IR sm\_is:  34.55518539676023
+IR sm\_oos:  3.1879457577902666
+\{'banks': 0.08970815066948956, 'oil': 0.1307340776803956, 'insurance':
+0.12469407189883207, 'tech': 0.24073645540833558, 'bio': 0.056126806518994134,
+'pharma': 0.2154506599583787, 'auto': 0.04356796923998072, 'retail':
+0.03811312527453183, 'manufacturing': 0.06086868335106177\}
+IR hier\_is:  10.960718037258717
+IR hier\_oos:  9.97486228127692
+IR equal\_is:  8.092429722249209
+IR equal\_oos:  8.679285237881217
+MC run:  6
+IR gt\_is:  10.29488944780034
+IR gt\_oos:  12.17669296205728
+IR sm\_is:  23.096866138190084
+IR sm\_oos:  3.5244099446923105
+\{'banks': 0.04458821663588455, 'oil': 0.1452822330941247, 'insurance':
+0.054715831023717125, 'tech': 0.34155364901948704, 'bio': 0.09827721046719719,
+'pharma': 0.11610843429365972, 'auto': 0.09071148619784236, 'retail':
+0.04016316521994309, 'manufacturing': 0.06859977404814413\}
+IR hier\_is:  10.497003057044049
+IR hier\_oos:  9.692562797952181
+IR equal\_is:  5.647853461730689
+IR equal\_oos:  7.372422037737031
+MC run:  7
+IR gt\_is:  11.35421453018477
+IR gt\_oos:  11.050013757617139
+IR sm\_is:  34.609865179971735
+IR sm\_oos:  3.2509384370362224
+\{'banks': 0.05269538627612803, 'oil': 0.042157948864162915, 'insurance':
+0.10730678314860663, 'tech': 0.1836807118111258, 'bio': 0.15576599512650935, 'pharma':
+0.22809336008536024, 'auto': 0.07670383721407253, 'retail': 0.06291820784434829,
+'manufacturing': 0.09067776962968625\}
+IR hier\_is:  12.545979633101311
+IR hier\_oos:  9.466487040454792
+IR equal\_is:  6.949506583531387
+IR equal\_oos:  6.114972061598138
+MC run:  8
+IR gt\_is:  10.353999316140763
+IR gt\_oos:  10.61824714848229
+IR sm\_is:  37.48072170328032
+IR sm\_oos:  2.252356765823739
+\{'banks': 0.07809976100716372, 'oil': 0.05241842869191247, 'insurance':
+0.12488063623068338, 'tech': 0.08794854357363897, 'bio': 0.04402867182081638,
+'pharma': 0.43712944433692213, 'auto': 0.06101065552288361, 'retail':
+0.07928380223493628, 'manufacturing': 0.0352000565810431\}
+IR hier\_is:  10.767989311510496
+IR hier\_oos:  8.897603816122166
+IR equal\_is:  5.409423410205528
+IR equal\_oos:  5.950879525394032
+MC run:  9
+IR gt\_is:  12.14637426022587
+IR gt\_oos:  10.761432374181734
+IR sm\_is:  36.26266064003784
+IR sm\_oos:  2.8696040212229548
+\{'banks': 0.04234865653226834, 'oil': 0.045858654229409344, 'insurance':
+0.05138479316066373, 'tech': 0.40415831548117837, 'bio': 0.01833294734327381,
+'pharma': 0.07967726146882839, 'auto': 0.08538397693076907, 'retail':
+0.1305072636491138, 'manufacturing': 0.1423481312044952\}
+IR hier\_is:  11.846574846619799
+IR hier\_oos:  8.819680650273495
+IR equal\_is:  7.919171428328404
+IR equal\_oos:  6.9260644655664425
 
     \end{Verbatim}
 
@@ -1850,7 +2024,7 @@ IR equal\_oos:  6.44793905253365
 \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_42_0.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_41_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
@@ -1860,7 +2034,7 @@ IR equal\_oos:  6.44793905253365
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-OOS Hierarchical / Markowitz:  3.014056979917056
+OOS Hierarchical / Markowitz:  2.576837438045077
 
     \end{Verbatim}
 
@@ -1870,7 +2044,7 @@ OOS Hierarchical / Markowitz:  3.014056979917056
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-OOS Equal / Markowitz:  2.298810927068244
+OOS Equal / Markowitz:  1.8603154407711007
 
     \end{Verbatim}
 
@@ -1880,7 +2054,7 @@ OOS Equal / Markowitz:  2.298810927068244
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-OOS Hierarchical / Equal:  1.3111373990904904
+OOS Hierarchical / Equal:  1.38516156000779
 
     \end{Verbatim}
 
@@ -2025,8 +2199,8 @@ method still outperforms equal weighting, though.
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
 MC run:  0
-IR gt\_is 10.758594652817013
-IR gt\_oos 11.113050819241867
+IR gt\_is 10.261467730615779
+IR gt\_oos 12.205307170065185
 
     \end{Verbatim}
 
@@ -2038,38 +2212,73 @@ converge.
     \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-IR sm\_is:  45.786748204016575
-IR sm\_oos:  2.1310671782905524
-IR pca\_is:  10.318541498885843
-IR pca\_oos:  10.98982646744523
+IR sm\_is:  31.20512771358549
+IR sm\_oos:  3.8123236510782195
+IR pca\_is:  10.01501451645455
+IR pca\_oos:  11.31193298615081
 MC run:  1
-IR gt\_is 10.67688681381962
-IR gt\_oos 11.421483144077598
-IR sm\_is:  48.90253528100965
-IR sm\_oos:  3.051585524228475
-IR pca\_is:  10.247278634275052
-IR pca\_oos:  10.41375102506033
+IR gt\_is 10.834829073114502
+IR gt\_oos 10.199363654522566
+IR sm\_is:  48.5033767861998
+IR sm\_oos:  2.587504099906182
+IR pca\_is:  11.221432505644566
+IR pca\_oos:  9.415137484914569
 MC run:  2
-IR gt\_is 12.176829836445028
-IR gt\_oos 12.06736269017553
-IR sm\_is:  30.738471183724553
-IR sm\_oos:  3.7438989461220653
-IR pca\_is:  11.642604559997816
-IR pca\_oos:  11.422175067044499
+IR gt\_is 11.350257499414049
+IR gt\_oos 11.37098932637587
+IR sm\_is:  34.63852875817028
+IR sm\_oos:  4.376452464663717
+IR pca\_is:  11.529198106561122
+IR pca\_oos:  10.268443128966922
 MC run:  3
-IR gt\_is 10.53346113430525
-IR gt\_oos 9.854214602957956
-IR sm\_is:  33.7132282314814
-IR sm\_oos:  3.7362309737404167
-IR pca\_is:  9.563417908861911
-IR pca\_oos:  8.58128351620866
+IR gt\_is 10.656830170999497
+IR gt\_oos 10.167979939837414
+IR sm\_is:  28.915355118058606
+IR sm\_oos:  3.8330860405686034
+IR pca\_is:  10.166715341968379
+IR pca\_oos:  9.737725994879051
 MC run:  4
-IR gt\_is 10.431839695937438
-IR gt\_oos 10.994779704295947
-IR sm\_is:  44.819303024148425
-IR sm\_oos:  3.5385970189220033
-IR pca\_is:  9.753478592732034
-IR pca\_oos:  10.152142979890636
+IR gt\_is 11.346637358483017
+IR gt\_oos 11.631193482210865
+IR sm\_is:  13.434900789513023
+IR sm\_oos:  2.824394471191307
+IR pca\_is:  11.2701557116966
+IR pca\_oos:  11.051427591477806
+MC run:  5
+IR gt\_is 10.972648077846118
+IR gt\_oos 12.07679547454538
+IR sm\_is:  45.755145658179934
+IR sm\_oos:  3.663931866736201
+IR pca\_is:  10.436667076113618
+IR pca\_oos:  11.144498371271428
+MC run:  6
+IR gt\_is 10.68026508950257
+IR gt\_oos 11.684912698906743
+IR sm\_is:  21.14543558335082
+IR sm\_oos:  2.737664908310083
+IR pca\_is:  10.33723606638786
+IR pca\_oos:  10.585595086766487
+MC run:  7
+IR gt\_is 10.805406472099559
+IR gt\_oos 10.74162797359147
+IR sm\_is:  31.122845181605665
+IR sm\_oos:  4.150300717750667
+IR pca\_is:  9.91937434019101
+IR pca\_oos:  10.415509985218758
+MC run:  8
+IR gt\_is 8.839536302610709
+IR gt\_oos 12.194076158622874
+IR sm\_is:  23.73105172327393
+IR sm\_oos:  5.663203864980169
+IR pca\_is:  9.035793751477094
+IR pca\_oos:  11.744754327636812
+MC run:  9
+IR gt\_is 11.779771362516906
+IR gt\_oos 11.270879177584115
+IR sm\_is:  23.736621133458673
+IR sm\_oos:  4.873290937938001
+IR pca\_is:  10.523662012346414
+IR pca\_oos:  10.206854599638687
 
     \end{Verbatim}
 
@@ -2079,7 +2288,7 @@ IR pca\_oos:  10.152142979890636
 \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
-OOS PCA / Markowitz:  3.1823943514171646
+OOS PCA / Markowitz:  2.7485971382068155
 
     \end{Verbatim}
 
@@ -2119,7 +2328,7 @@ OOS PCA / Markowitz:  3.1823943514171646
 \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{demo_files/demo_49_0.png}
+    \adjustimage{max size={0.4\linewidth}{0.4\paperheight}}{demo_files/demo_48_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
