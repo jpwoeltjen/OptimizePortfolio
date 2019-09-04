@@ -10,3 +10,6 @@ demo.aux
 demo.log
 demo.out
 demo.synctex.gz
+geom_brownian_motion.ipynb
+.ipynb_checkpoints
+hypothesis2.py

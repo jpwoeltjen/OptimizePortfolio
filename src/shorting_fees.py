@@ -5,8 +5,16 @@ from datetime import datetime
 
 
 def download(file_name='usa.txt'):
+    """
+    Downloads and saves as csv shorting rates of shortable stocks via
+    Interactive Brokers. file_name='' prints the directory.
+    """
     ftp = FTP('ftp3.interactivebrokers.com')
     ftp.login(user='shortstock', passwd=' ')
+
+    if file_name == '':
+        print(ftp.retrlines('LIST'))
+        return
 
     hasher = hashlib.md5()
 
@@ -46,6 +54,6 @@ if __name__ == "__main__":
     f = input()
     if f == '':
         print('No valid input')
-        f = 'usa.txt'
-    print('... downloading', f)
+    else:
+        print('... downloading', f)
     download(f)
