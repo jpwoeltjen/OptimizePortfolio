@@ -14,8 +14,7 @@ def sector_neutral_threshold(pf,
     """Select stocks accordig to their factor value subject to sector
     neutrality constraint. Only trade an existing position for a
     new one if the new position is significantly better than the old one.
-    Small cap stocks are hard to borrow: shorts_mkt_cap_floor specifies the
-    minimum mkt_cap for potential shorts.
+    Exclude hard to borrwo stocks.
     Parameters
     ----------
     pf: portfolio object
